@@ -1,15 +1,26 @@
+# Android Studio / IntelliJ IDEA
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+# Gradle
+.gradle/
+/build/
+app/build/
+
+# Local configuration (never commit these)
 local.properties
+keystore.properties
+
+# macOS
+.DS_Store
+
+# Native build
+.externalNativeBuild/
+.cxx/
+
+# Captures (Android Profiler)
+/captures/
+
+# Signing configs (if you add them later)
+*.jks
+*.keystore
