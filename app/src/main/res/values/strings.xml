@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">QRPhone</string>
+    <string name="app_title">QRPhone</string>
+    <string name="form_subtitle">Ingresa tus datos de contacto</string>
+    <string name="label_first_name">Nombre</string>
+    <string name="label_last_name">Apellido</string>
+    <string name="label_phone">Teléfono</string>
+    <string name="label_email">Correo (opcional)</string>
+    <string name="btn_save_generate">Guardar</string>
+    <string name="dialog_delete_title">Eliminar datos</string>
+    <string name="dialog_delete_message">¿Estás seguro de que deseas eliminar tus datos?</string>
+    <string name="btn_confirm_delete">Eliminar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="qr_description">Tu código QR</string>
+    <string name="tap_to_share">Toca para compartir</string>
+    <string name="btn_scan">Escanear Nuevo QR</string>
+    <string name="btn_delete">Eliminar</string>
+    <string name="btn_edit">Editar</string>
+    <string name="camera_permission_required">Se requiere permiso de cámara para escanear QR</string>
+    <string name="btn_grant_permission">Conceder permiso</string>
+    <string name="contact_preview_title">Nuevo Contacto</string>
+    <string name="contacts_permission_denied">Permiso de contactos denegado</string>
+    <string name="btn_save_contact">Guardar en Contactos</string>
+    <string name="contact_already_exists">Este contacto ya existe</string>
+    <string name="contact_saved_success">Contacto guardado correctamente</string>
+    <string name="contact_save_error">Error al guardar el contacto</string>
+    <string name="scan_instruction">Apunta al código QR de otro usuario</string>
+</resources>
