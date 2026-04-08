@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <!-- System defaults (kept for backward compatibility) -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- QRPhone app palette -->
-    <color name="qr_deep_blue">#FF3A75FF</color>
-    <color name="qr_lime_green">#FF6AC64F</color>
-    <color name="qr_cyan">#FF00BCD4</color>
-    <color name="qr_dark_blue">#FF1A55CC</color>
-    <color name="qr_dark_text">#FF1A1A2E</color>
-    <color name="qr_error">#FFD32F2F</color>
+    <!-- QRPhone MD3 palette -->
+    <color name="qr_primary">#FF0B5FD4</color>           <!-- rich professional blue -->
+    <color name="qr_on_primary">#FFFFFFFF</color>
+    <color name="qr_primary_container">#FFDAE3FF</color>
+    <color name="qr_on_primary_container">#FF001849</color>
+
+    <color name="qr_secondary">#FF565E72</color>         <!-- muted blue-gray -->
+    <color name="qr_on_secondary">#FFFFFFFF</color>
+    <color name="qr_secondary_container">#FFDAE2F9</color>
+
+    <color name="qr_background">#FFF8F9FF</color>        <!-- barely-tinted white -->
+    <color name="qr_on_background">#FF191A1F</color>     <!-- near-black -->
+
+    <color name="qr_surface">#FFF8F9FF</color>
+    <color name="qr_surface_variant">#FFE1E2EC</color>
+
+    <color name="qr_error">#FFBA1A1A</color>
+    <color name="qr_on_error">#FFFFFFFF</color>
+    <color name="qr_error_container">#FFFFdad6</color>
+
+    <color name="qr_gradient_start">#FF091E3E</color>    <!-- deep dark navy (top) -->
+    <color name="qr_gradient_end">#FF0B5FD4</color>     <!-- primary blue (bottom) -->
 </resources>

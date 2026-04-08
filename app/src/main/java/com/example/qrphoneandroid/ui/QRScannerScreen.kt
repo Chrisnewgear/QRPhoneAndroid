@@ -12,6 +12,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,11 +23,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,16 +39,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.qrphoneandroid.R
-import com.example.qrphoneandroid.ui.theme.QRDeepBlue
+import com.example.qrphoneandroid.ui.theme.NeumorphBase
+import com.example.qrphoneandroid.ui.theme.QROnSurfaceVariant
+import com.example.qrphoneandroid.ui.theme.QRPrimary
 import com.example.qrphoneandroid.ui.theme.QRWhite
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -58,7 +65,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 @OptIn(ExperimentalGetImage::class)
 @Composable
 fun QRScannerScreen(navController: NavController) {
-    val context = LocalContext.current
+    val context        = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     var hasCameraPermission by remember {
@@ -69,8 +76,8 @@ fun QRScannerScreen(navController: NavController) {
     }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    val scannedRef = remember { AtomicBoolean(false) }
-    val executor = remember { Executors.newSingleThreadExecutor() }
+    val scannedRef     = remember { AtomicBoolean(false) }
+    val executor       = remember { Executors.newSingleThreadExecutor() }
     val barcodeScanner = remember { BarcodeScanning.getClient() }
 
     DisposableEffect(Unit) {
@@ -90,11 +97,16 @@ fun QRScannerScreen(navController: NavController) {
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-        if (hasCameraPermission) {
+    if (hasCameraPermission) {
+        // ── Camera view (full-screen, dark) ───────────────────────────────
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+        ) {
             AndroidView(
                 factory = { ctx ->
-                    val previewView = PreviewView(ctx)
+                    val previewView         = PreviewView(ctx)
                     val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
                     cameraProviderFuture.addListener({
                         val cameraProvider = cameraProviderFuture.get()
@@ -116,7 +128,7 @@ fun QRScannerScreen(navController: NavController) {
                                     if (mediaImage != null) {
                                         val image = InputImage.fromMediaImage(
                                             mediaImage,
-                                            imageProxy.imageInfo.rotationDegrees
+                                            imageProxy.imageInfo.rotationDegrees,
                                         )
                                         barcodeScanner.process(image)
                                             .addOnSuccessListener { barcodes ->
@@ -149,7 +161,7 @@ fun QRScannerScreen(navController: NavController) {
                                 lifecycleOwner,
                                 CameraSelector.DEFAULT_BACK_CAMERA,
                                 preview,
-                                imageAnalyzer
+                                imageAnalyzer,
                             )
                         } catch (e: Exception) {
                             errorMessage = "Error al iniciar la cámara"
@@ -157,63 +169,122 @@ fun QRScannerScreen(navController: NavController) {
                     }, ContextCompat.getMainExecutor(ctx))
                     previewView
                 },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
 
-            // Viewfinder overlay
+            // Viewfinder — rounded corners, primary-color border
             Box(
                 modifier = Modifier
                     .size(240.dp)
                     .align(Alignment.Center)
-                    .border(2.dp, QRDeepBlue)
+                    .clip(RoundedCornerShape(16.dp))
+                    .border(2.dp, QRPrimary, RoundedCornerShape(16.dp)),
             )
 
+            // Instruction text
             Text(
-                text = stringResource(R.string.scan_instruction),
-                color = QRWhite,
+                text     = stringResource(R.string.scan_instruction),
+                color    = QRWhite,
+                fontSize = 14.sp,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 100.dp)
+                    .padding(bottom = 100.dp),
             )
-        } else {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+
+            // Back button — white icon on dark background
+            val backInteraction = remember { MutableInteractionSource() }
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
+                    .size(44.dp)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.4f),
+                        shape = RoundedCornerShape(12.dp),
+                    )
+                    .clickable(
+                        interactionSource = backInteraction,
+                        indication        = null,
+                        onClick           = { navController.popBackStack() },
+                    ),
             ) {
-                Text(
-                    text = stringResource(R.string.camera_permission_required),
-                    color = QRWhite
+                Icon(
+                    imageVector        = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Volver",
+                    tint               = QRWhite,
+                    modifier           = Modifier.size(22.dp),
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }) {
-                    Text(stringResource(R.string.btn_grant_permission))
-                }
+            }
+
+            // Error snackbar
+            errorMessage?.let { err ->
+                Snackbar(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp),
+                    action = {
+                        TextButton(onClick = { errorMessage = null }) { Text("OK") }
+                    },
+                ) { Text(err) }
             }
         }
-
-        IconButton(
-            onClick = { navController.popBackStack() },
+    } else {
+        // ── Permission-denied state — neumorphic ──────────────────────────
+        Box(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(16.dp)
+                .fillMaxSize()
+                .background(NeumorphBase),
         ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
-                tint = QRWhite
-            )
-        }
+            Column(
+                modifier            = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                // Back button
+                val backInteraction = remember { MutableInteractionSource() }
+                val backPressed by backInteraction.collectIsPressedAsState()
 
-        errorMessage?.let { err ->
-            Snackbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                action = {
-                    TextButton(onClick = { errorMessage = null }) { Text("OK") }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .align(Alignment.Start)
+                        .then(
+                            if (backPressed) Modifier.neumorphPressed(cornerRadius = 24.dp, elevation = 4.dp)
+                            else             Modifier.neumorphRaised(cornerRadius = 24.dp, elevation = 6.dp)
+                        )
+                        .clickable(
+                            interactionSource = backInteraction,
+                            indication        = null,
+                            onClick           = { navController.popBackStack() },
+                        ),
+                ) {
+                    Icon(
+                        imageVector        = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Volver",
+                        tint               = QRPrimary,
+                        modifier           = Modifier.size(22.dp),
+                    )
                 }
-            ) { Text(err) }
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                Text(
+                    text       = stringResource(R.string.camera_permission_required),
+                    color      = QROnSurfaceVariant,
+                    fontSize   = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier   = Modifier.padding(bottom = 32.dp),
+                )
+
+                NeumorphPrimaryButton(
+                    text    = stringResource(R.string.btn_grant_permission),
+                    onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+                )
+            }
         }
     }
 }
@@ -224,8 +295,8 @@ private fun validateQRPayload(raw: String): String? {
     if (parts.size < 3) return null
 
     val firstName = parts[0].trim()
-    val lastName = parts[1].trim()
-    val phone = parts[2].trim()
+    val lastName  = parts[1].trim()
+    val phone     = parts[2].trim()
     if (firstName.isEmpty() || lastName.isEmpty()) return null
 
     val phoneRegex = Regex("^\\+?[0-9\\s\\-().]{7,20}$")

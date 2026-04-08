@@ -1,12 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Dark theme — Compose handles its own dark mode; this just keeps the window consistent -->
+    <!-- Dark theme — Compose handles its own dark mode; this keeps the window chrome consistent -->
     <style name="Theme.QRPhoneAndroid" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/qr_deep_blue</item>
-        <item name="colorPrimaryVariant">@color/qr_dark_blue</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/qr_lime_green</item>
-        <item name="colorSecondaryVariant">@color/qr_lime_green</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor" tools:targetApi="l">@color/qr_deep_blue</item>
+        <item name="colorPrimary">@color/qr_primary</item>
+        <item name="colorPrimaryVariant">@color/qr_gradient_start</item>
+        <item name="colorOnPrimary">@color/qr_on_primary</item>
+        <item name="colorSecondary">@color/qr_secondary</item>
+        <item name="colorSecondaryVariant">@color/qr_secondary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/qr_gradient_start</item>
     </style>
 </resources>

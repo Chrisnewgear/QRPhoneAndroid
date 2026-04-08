@@ -25,4 +25,8 @@
     <string name="contact_saved_success">Contacto guardado correctamente</string>
     <string name="contact_save_error">Error al guardar el contacto</string>
     <string name="scan_instruction">Apunta al código QR de otro usuario</string>
+    <string name="display_subtitle">Tu código QR personal</string>
+    <string name="contact_preview_subtitle">Revisa los datos antes de guardar</string>
+    <string name="label_phone_field">Teléfono</string>
+    <string name="label_email_field">Correo</string>
 </resources>
