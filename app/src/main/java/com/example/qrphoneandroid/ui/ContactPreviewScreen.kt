@@ -60,7 +60,10 @@ fun ContactPreviewScreen(encodedData: String, navController: NavController) {
 
     val firstName = parts.getOrElse(0) { "" }
     val lastName  = parts.getOrElse(1) { "" }
-    val phone     = parts.getOrElse(2) { "" }
+    // '+' is lost during double URL decoding (Nav component + URLDecoder both decode)
+    val phone     = parts.getOrElse(2) { "" }.trim().let {
+        if (it.isNotEmpty() && !it.startsWith("+")) "+$it" else it
+    }
     val email     = parts.getOrNull(3)?.takeIf { it.isNotEmpty() }
 
     var statusMessage by remember { mutableStateOf<String?>(null) }
