@@ -7,6 +7,5 @@
         <item name="colorSecondary">@color/qr_secondary</item>
         <item name="colorSecondaryVariant">@color/qr_secondary</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="android:statusBarColor" tools:targetApi="l">@color/qr_gradient_start</item>
     </style>
 </resources>

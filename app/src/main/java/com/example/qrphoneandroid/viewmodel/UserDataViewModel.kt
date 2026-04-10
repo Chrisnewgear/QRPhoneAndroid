@@ -35,7 +35,7 @@ class UserDataViewModel(application: Application) : AndroidViewModel(application
     fun saveData(firstName: String, lastName: String, phoneNumber: String, email: String) {
         val sanitizedFirst = firstName.trim().take(50)
         val sanitizedLast = lastName.trim().take(50)
-        val sanitizedPhone = phoneNumber.trim().take(20)
+        val sanitizedPhone = phoneNumber.trim().take(25)  // extended for international numbers
         val sanitizedEmail = email.trim().take(100).takeIf { it.isNotEmpty() }
 
         if (sanitizedFirst.isEmpty()) {
@@ -46,7 +46,7 @@ class UserDataViewModel(application: Application) : AndroidViewModel(application
             _validationError.value = "El apellido es obligatorio"
             return
         }
-        val phoneRegex = Regex("^\\+?[0-9\\s\\-().]{7,20}$")
+        val phoneRegex = Regex("^\\+[1-9][0-9]{6,24}$")
         if (!phoneRegex.matches(sanitizedPhone)) {
             _validationError.value = "Número de teléfono inválido"
             return

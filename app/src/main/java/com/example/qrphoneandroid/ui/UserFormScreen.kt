@@ -80,7 +80,9 @@ fun UserFormScreen(viewModel: UserDataViewModel) {
 
     var firstName   by remember { mutableStateOf(userData?.firstName   ?: "") }
     var lastName    by remember { mutableStateOf(userData?.lastName    ?: "") }
-    var phoneNumber by remember { mutableStateOf(userData?.phoneNumber ?: "") }
+    val (initDialCode, initLocalNumber) = remember { parsePhoneNumber(userData?.phoneNumber ?: "") }
+    var countryCode by remember { mutableStateOf(initDialCode) }
+    var localNumber by remember { mutableStateOf(initLocalNumber) }
     var email       by remember { mutableStateOf(userData?.email       ?: "") }
 
     val validationError by viewModel.validationError.collectAsState()
@@ -135,12 +137,17 @@ fun UserFormScreen(viewModel: UserDataViewModel) {
                         onValueChange = { lastName = it.take(50) },
                         label         = stringResource(R.string.label_last_name),
                     )
-                    NeumorphTextField(
-                        value         = phoneNumber,
-                        onValueChange = { phoneNumber = it.take(20) },
-                        label         = stringResource(R.string.label_phone),
-                        keyboardType  = KeyboardType.Phone,
+
+                    // ── Country code + phone number picker ───────────────────
+                    PhoneCountryPickerField(
+                        dialCode         = countryCode,
+                        phoneNumber      = localNumber,
+                        onDialCodeChange = { countryCode = it },
+                        onPhoneNumberChange = { localNumber = it },
+                        label            = stringResource(R.string.label_phone),
+                        modifier         = Modifier.fillMaxWidth(),
                     )
+                    // ─────────────────────────────────────────────────────────
                     NeumorphTextField(
                         value         = email,
                         onValueChange = { email = it.take(100) },
@@ -171,7 +178,7 @@ fun UserFormScreen(viewModel: UserDataViewModel) {
                         }
                         NeumorphPrimaryButton(
                             text     = stringResource(R.string.btn_save_generate),
-                            onClick  = { viewModel.saveData(firstName, lastName, phoneNumber, email) },
+                            onClick  = { viewModel.saveData(firstName, lastName, countryCode + localNumber, email) },
                             modifier = Modifier.weight(1f),
                         )
                     }
