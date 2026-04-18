@@ -1,19 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Data-extraction rules applied on API level 31+ via
+    android:dataExtractionRules in AndroidManifest.xml.
+
+    Reference:
+    https://developer.android.com/about/versions/12/backup-restore
 -->
 <data-extraction-rules>
-    <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
-    </cloud-backup>
+
     <!--
-    <device-transfer>
-        <include .../>
-        <exclude .../>
-    </device-transfer>
+        ── Cloud backup (Google One / Google Drive) ─────────────────────────
+        Exclude the EncryptedSharedPreferences file. The master key is held
+        in the hardware-backed Android Keystore which is never uploaded, so
+        restoring the blob on a different device just produces unreadable
+        bytes. Keep private data off Google's servers entirely.
     -->
+    <cloud-backup>
+        <exclude domain="sharedpref" path="qrphone_secure_prefs.xml" />
+        <exclude domain="external" path="qr_code.png" />
+        <exclude domain="root" path="cache/qr_code.png" />
+    </cloud-backup>
+
+    <!--
+        ── Device-to-device transfer (Android 12+ migration) ────────────────
+        Same reasoning: without the source device's Keystore entry the data
+        is useless, and we don't want plaintext contact info crossing the
+        transfer link during setup.
+    -->
+    <device-transfer>
+        <exclude domain="sharedpref" path="qrphone_secure_prefs.xml" />
+        <exclude domain="external" path="qr_code.png" />
+        <exclude domain="root" path="cache/qr_code.png" />
+    </device-transfer>
+
 </data-extraction-rules>
