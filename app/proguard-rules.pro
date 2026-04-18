@@ -1,21 +1,57 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ─────────────────────────────────────────────────────────────────────────────
+# QRPhoneAndroid — ProGuard / R8 rules
+# ─────────────────────────────────────────────────────────────────────────────
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# ── Crash-stack readability ───────────────────────────────────────────────────
+# Keeps line numbers in stack traces so crash reports are still useful.
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# ── Kotlin ────────────────────────────────────────────────────────────────────
+-keep class kotlin.Metadata { *; }
+-keepclassmembers class **$WhenMappings { <fields>; }
+-keepclassmembers class kotlin.Lazy { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# ── Jetpack Compose ───────────────────────────────────────────────────────────
+# Compose relies on reflection-free code generation; R8 handles it well,
+# but we keep the @Composable annotation so tooling stays happy.
+-keepclassmembers class * {
+    @androidx.compose.runtime.Composable <methods>;
+}
+
+# ── AndroidX Security / EncryptedSharedPreferences ───────────────────────────
+# The crypto classes use reflection internally — keep them in full.
+-keep class androidx.security.crypto.** { *; }
+-keep class com.google.crypto.tink.** { *; }
+
+# ── ML Kit Barcode Scanning ───────────────────────────────────────────────────
+-keep class com.google.mlkit.** { *; }
+-keep class com.google.android.gms.internal.mlkit_vision_barcode.** { *; }
+-dontwarn com.google.mlkit.**
+
+# ── ZXing QR code generation ─────────────────────────────────────────────────
+-keep class com.google.zxing.** { *; }
+-dontwarn com.google.zxing.**
+
+# ── CameraX ───────────────────────────────────────────────────────────────────
+-keep class androidx.camera.** { *; }
+-dontwarn androidx.camera.**
+
+# ── Jetpack Navigation ────────────────────────────────────────────────────────
+-keep class androidx.navigation.** { *; }
+
+# ── ViewModel & LiveData ─────────────────────────────────────────────────────
+-keep class androidx.lifecycle.** { *; }
+-keepclassmembers class * extends androidx.lifecycle.ViewModel {
+    <init>(...);
+}
+
+# ── App data model (serialised into EncryptedSharedPreferences via Gson) ──────
+# If you add Gson / Moshi in the future, keep the UserData fields.
+-keep class com.example.qrphoneandroid.model.** { *; }
+
+# ── Suppress noisy warnings from transitive dependencies ──────────────────────
+-dontwarn org.bouncycastle.**
+-dontwarn org.conscrypt.**
+-dontwarn org.openjsse.**
+-dontwarn javax.annotation.**

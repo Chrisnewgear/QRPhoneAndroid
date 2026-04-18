@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(30.dp)
+                            .height(35.dp)
                             .background(QRPrimary)
                     )
 
