@@ -41,6 +41,15 @@ android {
     buildFeatures {
         compose = true
     }
+    lint {
+        lintConfig = file("lint.xml")
+    }
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-opt-in=androidx.camera.core.ExperimentalGetImage")
+    }
 }
 
 dependencies {

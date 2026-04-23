@@ -50,20 +50,16 @@ import com.example.qrphoneandroid.ui.theme.NeumorphBase
 import com.example.qrphoneandroid.ui.theme.QROnBackground
 import com.example.qrphoneandroid.ui.theme.QROnSurfaceVariant
 import com.example.qrphoneandroid.ui.theme.QRPrimary
-import java.net.URLDecoder
 
 @Composable
 fun ContactPreviewScreen(encodedData: String, navController: NavController) {
     val context = LocalContext.current
-    val rawData = remember { URLDecoder.decode(encodedData, "UTF-8") }
-    val parts   = remember { rawData.split("\n") }
+    // Navigation component already URL-decodes query parameters via Uri.getQueryParameter()
+    val parts = remember { encodedData.split("\n") }
 
     val firstName = parts.getOrElse(0) { "" }
     val lastName  = parts.getOrElse(1) { "" }
-    // '+' is lost during double URL decoding (Nav component + URLDecoder both decode)
-    val phone     = parts.getOrElse(2) { "" }.trim().let {
-        if (it.isNotEmpty() && !it.startsWith("+")) "+$it" else it
-    }
+    val phone     = parts.getOrElse(2) { "" }.trim()
     val email     = parts.getOrNull(3)?.takeIf { it.isNotEmpty() }
 
     var statusMessage by remember { mutableStateOf<String?>(null) }
@@ -261,6 +257,9 @@ private fun ContactInfoRow(label: String, value: String) {
     }
 }
 
+private val PHONE_REGEX = Regex("^\\+[1-9][0-9]{6,24}$")
+private val EMAIL_REGEX = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+
 private fun saveContact(
     context: Context,
     firstName: String,
@@ -269,6 +268,15 @@ private fun saveContact(
     email: String?,
     canRead: Boolean,
 ): Pair<Boolean, String> {
+    val safeFirst = firstName.replace(Regex("[\\p{Cntrl}]"), "").trim()
+    val safeLast  = lastName.replace(Regex("[\\p{Cntrl}]"), "").trim()
+    if (safeFirst.isEmpty() || safeLast.isEmpty() || !PHONE_REGEX.matches(phone)) {
+        return Pair(false, context.getString(R.string.contact_save_error))
+    }
+    if (email != null && !EMAIL_REGEX.matches(email)) {
+        return Pair(false, context.getString(R.string.contact_save_error))
+    }
+
     if (canRead) {
         val cursor: Cursor? = context.contentResolver.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -300,8 +308,8 @@ private fun saveContact(
                 ContactsContract.Data.MIMETYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
             )
-            .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, firstName)
-            .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, lastName)
+            .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, safeFirst)
+            .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, safeLast)
             .build()
     )
     ops.add(

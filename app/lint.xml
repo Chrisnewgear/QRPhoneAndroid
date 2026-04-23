@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!--
+        CameraX's imageProxy.image is annotated @ExperimentalGetImage but is the
+        only practical way to obtain a MediaImage for ML Kit analysis. The API has
+        been stable in practice since CameraX 1.0; suppress the opt-in lint error
+        project-wide rather than scattering @SuppressLint everywhere.
+    -->
+    <issue id="UnsafeOptInUsageError">
+        <option name="opt-in" value="androidx.camera.core.ExperimentalGetImage" />
+    </issue>
+</lint>

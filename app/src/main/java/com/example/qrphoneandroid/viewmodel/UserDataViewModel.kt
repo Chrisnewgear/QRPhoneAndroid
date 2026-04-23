@@ -12,6 +12,11 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class UserDataViewModel(application: Application) : AndroidViewModel(application) {
 
+    companion object {
+        private val PHONE_REGEX = Regex("^\\+[1-9][0-9]{6,24}$")
+        private val EMAIL_REGEX = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+    }
+
     private val storageService = StorageService(application)
     private val qrCodeService = QRCodeService()
 
@@ -46,14 +51,12 @@ class UserDataViewModel(application: Application) : AndroidViewModel(application
             _validationError.value = "El apellido es obligatorio"
             return
         }
-        val phoneRegex = Regex("^\\+[1-9][0-9]{6,24}$")
-        if (!phoneRegex.matches(sanitizedPhone)) {
+        if (!PHONE_REGEX.matches(sanitizedPhone)) {
             _validationError.value = "Número de teléfono inválido"
             return
         }
         if (sanitizedEmail != null) {
-            val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
-            if (!emailRegex.matches(sanitizedEmail)) {
+            if (!EMAIL_REGEX.matches(sanitizedEmail)) {
                 _validationError.value = "Correo electrónico inválido"
                 return
             }

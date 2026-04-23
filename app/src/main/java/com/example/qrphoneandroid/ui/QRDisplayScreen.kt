@@ -209,7 +209,10 @@ fun QRDisplayScreen(navController: NavController, viewModel: UserDataViewModel) 
 }
 
 private fun shareQRCode(context: Context, bitmap: Bitmap) {
-    val file = File(context.cacheDir, "qr_code.png")
+    val dir = File(context.cacheDir, "qr")
+    dir.mkdirs()
+    val file = File(dir, "qr_code.png")
+    file.delete()  // remove any previous copy before writing a fresh one
     FileOutputStream(file).use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
     val intent = Intent(Intent.ACTION_SEND).apply {
@@ -217,5 +220,5 @@ private fun shareQRCode(context: Context, bitmap: Bitmap) {
         putExtra(Intent.EXTRA_STREAM, uri)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
-    context.startActivity(Intent.createChooser(intent, "Compartir QR"))
+    context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_qr_title)))
 }

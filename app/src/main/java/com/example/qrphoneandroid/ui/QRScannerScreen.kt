@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -62,7 +61,6 @@ import java.net.URLEncoder
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
-@OptIn(ExperimentalGetImage::class)
 @Composable
 fun QRScannerScreen(navController: NavController) {
     val context        = LocalContext.current
@@ -75,6 +73,8 @@ fun QRScannerScreen(navController: NavController) {
         )
     }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val msgQrInvalid    = stringResource(R.string.qr_invalid)
+    val msgCameraError  = stringResource(R.string.camera_init_error)
 
     val scannedRef     = remember { AtomicBoolean(false) }
     val executor       = remember { Executors.newSingleThreadExecutor() }
@@ -142,7 +142,7 @@ fun QRScannerScreen(navController: NavController) {
                                                                 navController.navigate("contact?data=$encoded")
                                                             }
                                                         } else {
-                                                            errorMessage = "Código QR inválido"
+                                                            errorMessage = msgQrInvalid
                                                         }
                                                         break
                                                     }
@@ -164,7 +164,7 @@ fun QRScannerScreen(navController: NavController) {
                                 imageAnalyzer,
                             )
                         } catch (e: Exception) {
-                            errorMessage = "Error al iniciar la cámara"
+                            errorMessage = msgCameraError
                         }
                     }, ContextCompat.getMainExecutor(ctx))
                     previewView
@@ -224,7 +224,7 @@ fun QRScannerScreen(navController: NavController) {
                         .align(Alignment.BottomCenter)
                         .padding(16.dp),
                     action = {
-                        TextButton(onClick = { errorMessage = null }) { Text("OK") }
+                        TextButton(onClick = { errorMessage = null }) { Text(stringResource(R.string.btn_ok)) }
                     },
                 ) { Text(err) }
             }
@@ -299,7 +299,7 @@ private fun validateQRPayload(raw: String): String? {
     val phone     = parts[2].trim()
     if (firstName.isEmpty() || lastName.isEmpty()) return null
 
-    val phoneRegex = Regex("^\\+?[0-9\\s\\-().]{7,20}$")
+    val phoneRegex = Regex("^\\+[1-9][0-9]{6,24}$")
     if (!phoneRegex.matches(phone)) return null
 
     if (parts.size >= 4) {

@@ -2,6 +2,7 @@ package com.example.qrphoneandroid.service
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.qrphoneandroid.model.UserData
@@ -19,12 +20,12 @@ class StorageService(context: Context) {
     )
 
     fun saveUserData(data: UserData) {
-        prefs.edit()
-            .putString("firstName", data.firstName)
-            .putString("lastName", data.lastName)
-            .putString("phoneNumber", data.phoneNumber)
-            .putString("email", data.email)
-            .apply()
+        prefs.edit {
+            putString("firstName", data.firstName)
+            putString("lastName", data.lastName)
+            putString("phoneNumber", data.phoneNumber)
+            putString("email", data.email)
+        }
     }
 
     fun loadUserData(): UserData? {
@@ -36,6 +37,6 @@ class StorageService(context: Context) {
     }
 
     fun deleteUserData() {
-        prefs.edit().clear().apply()
+        prefs.edit { clear() }
     }
 }

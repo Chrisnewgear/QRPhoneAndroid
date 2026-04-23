@@ -29,4 +29,8 @@
     <string name="contact_preview_subtitle">Revisa los datos antes de guardar</string>
     <string name="label_phone_field">Teléfono</string>
     <string name="label_email_field">Correo</string>
+    <string name="qr_invalid">Código QR inválido</string>
+    <string name="camera_init_error">Error al iniciar la cámara</string>
+    <string name="share_qr_title">Compartir QR</string>
+    <string name="btn_ok">OK</string>
 </resources>

@@ -67,13 +67,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    // Bottom bar — 15 dp bluish accent
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .height(60.dp)
-//                            .background(QRPrimary)
-//                    )
                 }
             }
         }

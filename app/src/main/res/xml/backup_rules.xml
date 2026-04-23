@@ -21,7 +21,6 @@
         Exclude the cached QR PNG that we create for sharing — it contains
         the full contact payload and has no business in cloud backups.
     -->
-    <exclude domain="external" path="qr_code.png" />
-    <exclude domain="root" path="cache/qr_code.png" />
+    <exclude domain="root" path="cache/qr/" />
 
 </full-backup-content>
